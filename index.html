@@ -1,0 +1,2485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>
+Geometry Unit 3 Week 1
+Similarity Investigation Lab
+</title>
+
+<style>
+
+:root{
+
+--navy:#0f2d44;
+--blue:#f0f7fb;
+--blueBorder:#2f80a8;
+
+--green:#eefaf1;
+--greenBorder:#3ca65c;
+
+--yellow:#fff8e6;
+--yellowBorder:#f2b705;
+
+--purple:#f3e5f5;
+--purpleBorder:#9c64a6;
+
+--gray:#f6f9fb;
+--grayBorder:#d6e6ef;
+
+--danger:#b42318;
+--dangerBG:#fff2f2;
+
+--text:#1f2933;
+
+}
+
+*{
+box-sizing:border-box;
+}
+
+body{
+
+margin:0;
+background:#edf2f7;
+font-family:Arial,Helvetica,sans-serif;
+color:var(--text);
+line-height:1.55;
+
+}
+
+.wrap{
+
+max-width:1100px;
+margin:auto;
+padding:18px;
+
+}
+
+.hero{
+
+background:var(--navy);
+color:white;
+padding:28px;
+border-radius:14px;
+box-shadow:0 8px 24px rgba(0,0,0,.15);
+
+}
+
+.hero h1{
+
+margin:0;
+font-size:30px;
+
+}
+
+.hero p{
+
+margin:8px 0 0;
+font-size:18px;
+
+}
+
+.card{
+
+background:white;
+border-radius:12px;
+padding:18px;
+margin-top:18px;
+box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+.info{
+
+background:var(--blue);
+border-left:6px solid var(--blueBorder);
+
+}
+
+.green{
+
+background:var(--green);
+border-left:6px solid var(--greenBorder);
+
+}
+
+.yellow{
+
+background:var(--yellow);
+border-left:6px solid var(--yellowBorder);
+
+}
+
+.purple{
+
+background:var(--purple);
+border-left:6px solid var(--purpleBorder);
+
+}
+
+h2{
+
+margin-top:0;
+color:var(--navy);
+border-bottom:2px solid var(--grayBorder);
+padding-bottom:6px;
+
+}
+
+button{
+
+font:inherit;
+
+}
+
+.button{
+
+background:var(--navy);
+color:white;
+padding:12px 20px;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+
+}
+
+.button:hover{
+
+filter:brightness(1.08);
+
+}
+
+.button.secondary{
+
+background:#2f80a8;
+
+}
+
+.button:disabled{
+
+opacity:.45;
+cursor:not-allowed;
+
+}
+
+input{
+
+font:inherit;
+
+}
+
+.nameInput{
+
+width:100%;
+padding:11px;
+border:1px solid #bcc9d5;
+border-radius:8px;
+margin-top:8px;
+
+}
+
+.hidden{
+
+display:none!important;
+
+}
+
+.topBar{
+
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+justify-content:space-between;
+align-items:center;
+
+}
+
+.progressOuter{
+
+height:18px;
+flex:1;
+min-width:240px;
+background:white;
+border:1px solid var(--grayBorder);
+border-radius:999px;
+overflow:hidden;
+
+}
+
+.progressInner{
+
+width:0%;
+height:100%;
+background:var(--greenBorder);
+transition:.3s;
+
+}
+
+.stats{
+
+font-weight:bold;
+color:var(--navy);
+
+}
+
+.tracker{
+
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:8px;
+margin-top:18px;
+
+}
+
+.step{
+
+padding:10px;
+border-radius:8px;
+background:var(--gray);
+border:1px solid var(--grayBorder);
+text-align:center;
+font-size:14px;
+font-weight:bold;
+
+}
+
+.step.active{
+
+background:var(--blue);
+border-color:var(--blueBorder);
+
+}
+
+.step.done{
+
+background:var(--green);
+border-color:var(--greenBorder);
+color:#236b35;
+
+}
+
+.caseTitle{
+
+color:var(--navy);
+
+}
+
+.missionBox{
+
+background:#fafafa;
+border:1px solid var(--grayBorder);
+border-radius:10px;
+padding:16px;
+margin-top:18px;
+
+}
+
+.question{
+
+margin-top:16px;
+padding:16px;
+border-radius:8px;
+border:1px solid var(--grayBorder);
+
+}
+
+.feedback{
+
+margin-top:14px;
+font-weight:bold;
+
+}
+
+.good{
+
+color:#1d7a34;
+
+}
+
+.bad{
+
+color:#b42318;
+
+}
+
+.navButtons{
+
+display:flex;
+justify-content:flex-end;
+gap:12px;
+margin-top:20px;
+
+}
+
+svg{
+
+width:100%;
+max-width:650px;
+height:auto;
+
+}
+
+.diagram{
+
+text-align:center;
+margin:18px 0;
+
+}
+
+table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+th{
+
+background:var(--navy);
+color:white;
+padding:10px;
+border:1px solid var(--grayBorder);
+
+}
+
+td{
+
+padding:10px;
+border:1px solid var(--grayBorder);
+
+}
+
+.certificate{
+
+padding:34px;
+background:white;
+border:8px double var(--navy);
+text-align:center;
+position:relative;
+
+}
+
+.certificate h2{
+
+border:none;
+font-size:30px;
+
+}
+
+.certName{
+
+font-size:30px;
+font-weight:bold;
+color:var(--navy);
+border-bottom:2px solid var(--navy);
+display:inline-block;
+padding:8px 30px;
+margin:12px;
+
+}
+
+.certGrid{
+
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:14px;
+margin-top:24px;
+
+}
+
+.certItem{
+
+padding:12px;
+border:1px solid var(--grayBorder);
+background:var(--gray);
+border-radius:8px;
+text-align:left;
+
+}
+
+.verify{
+
+display:inline-block;
+margin-top:18px;
+padding:12px 18px;
+background:var(--green);
+border:2px solid var(--greenBorder);
+font-family:Courier New,monospace;
+font-weight:bold;
+font-size:20px;
+letter-spacing:1px;
+
+}
+
+@media(max-width:760px){
+
+.tracker{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+.certGrid{
+
+grid-template-columns:1fr;
+
+}
+
+.hero h1{
+
+font-size:24px;
+
+}
+
+.certName{
+
+font-size:22px;
+
+}
+
+}
+
+@media print{
+
+body{
+
+background:white;
+
+}
+
+body *{
+
+visibility:hidden;
+
+}
+
+#certificateSection,
+#certificateSection *{
+
+visibility:visible;
+
+}
+
+#certificateSection{
+
+position:absolute;
+top:0;
+left:0;
+width:100%;
+
+}
+
+.noPrint{
+
+display:none!important;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrap">
+
+<header class="hero">
+
+<h1>
+Similarity Investigation Lab
+</h1>
+
+<p>
+
+Geometry • Unit 3 • Week 1 Prove It!
+
+</p>
+
+</header>
+
+<section
+class="card info"
+id="introSection">
+
+<h2>
+
+Similarity Investigation Briefing
+
+</h2>
+
+<p>
+
+Complete four investigation labs to demonstrate mastery of dilations and similarity.
+
+</p>
+
+<p>
+
+Every student receives randomized values.
+
+You may correct mistakes until every investigation is correct.
+
+</p>
+
+<div class="card yellow">
+
+<h3>
+
+Certificate Requirement
+
+</h3>
+
+<p>
+
+✔ 12 Investigation Questions Correct
+
+</p>
+
+<p>
+
+✔ 4 Mastery Questions Correct
+
+</p>
+
+<p>
+
+✔ First & Last Name Entered
+
+</p>
+
+</div>
+
+<label>
+
+<strong>
+
+First and Last Name
+
+</strong>
+
+</label>
+
+<input
+id="studentName"
+class="nameInput"
+type="text"
+placeholder="Example: Jordan Martinez">
+
+<div
+id="nameFeedback"
+class="feedback bad">
+
+</div>
+
+<br>
+
+<button
+id="startButton"
+class="button">
+
+Begin Investigation
+
+</button>
+
+</section>
+
+<section
+id="activitySection"
+class="card hidden">
+
+<div class="topBar">
+
+<div class="progressOuter">
+
+<div
+id="progressBar"
+class="progressInner">
+
+</div>
+
+</div>
+
+<div
+id="progressText"
+class="stats">
+
+Investigation 1 of 4
+
+</div>
+
+</div>
+
+<div class="tracker">
+
+<div
+class="step"
+id="step0">
+
+Coordinate
+Dilations
+
+</div>
+
+<div
+class="step"
+id="step1">
+
+Scale
+Factor
+
+</div>
+
+<div
+class="step"
+id="step2">
+
+Similar
+Figures
+
+</div>
+
+<div
+class="step"
+id="step3">
+
+Triangle
+Similarity
+
+</div>
+
+<div
+class="step"
+id="step4">
+
+Mastery
+
+</div>
+
+<div
+class="step"
+id="step5">
+
+Certificate
+
+</div>
+
+</div>
+
+<div
+id="missionContainer">
+
+</div>
+
+<div
+id="activityFeedback"
+class="feedback">
+
+</div>
+
+<div
+class="navButtons">
+
+<button
+id="checkButton"
+class="button">
+
+Check Investigation
+
+</button>
+
+<button
+id="nextButton"
+class="button secondary"
+disabled>
+
+Next Investigation
+
+</button>
+
+</div>
+
+</section>
+
+<section
+id="masterySection"
+class="card purple hidden">
+
+<h2>
+
+Final Mastery Check
+
+</h2>
+
+<p>
+
+Answer every question correctly to unlock your certificate.
+
+</p>
+
+<div
+id="masteryContainer">
+
+</div>
+
+<div
+id="masteryFeedback"
+class="feedback">
+
+</div>
+
+<br>
+
+<button
+id="masteryButton"
+class="button">
+
+Check Final Answers
+
+</button>
+
+</section>
+
+<section
+id="certificateSection"
+class="card green hidden">
+
+<div class="certificate">
+
+<p>
+
+GEOMETRY • UNIT 3 • WEEK 1
+
+</p>
+
+<h2>
+
+Certificate of Mastery
+
+</h2>
+
+<p>
+
+Awarded to
+
+</p>
+
+<div
+class="certName"
+id="certificateName">
+
+</div>
+
+<p>
+
+for successfully completing the
+
+<strong>
+
+Similarity Investigation Lab
+
+</strong>
+
+</p>
+
+<div class="certGrid">
+
+<div class="certItem">
+
+<strong>
+
+Completion Date
+
+</strong>
+
+<br>
+
+<span id="certificateDate">
+
+</span>
+
+</div>
+
+<div class="certItem">
+
+<strong>
+
+Investigation Score
+
+</strong>
+
+<br>
+
+12 / 12 Correct
+
+</div>
+
+<div class="certItem">
+
+<strong>
+
+Mastery Score
+
+</strong>
+
+<br>
+
+4 / 4 Correct
+
+</div>
+
+<div class="certItem">
+
+<strong>
+
+Overall
+
+</strong>
+
+<br>
+
+Mastery Demonstrated
+
+</div>
+
+</div>
+
+<p>
+
+Verification Code
+
+</p>
+
+<div
+class="verify"
+id="verificationCode">
+
+</div>
+
+</div>
+
+<div
+class="navButtons noPrint">
+
+<button
+class="button"
+id="printButton">
+
+Print / Save PDF
+
+</button>
+
+<button
+class="button secondary"
+id="restartButton">
+
+Start New Attempt
+
+</button>
+
+</div>
+
+</section>
+
+</div>
+<script>
+"use strict";
+
+/* =========================================================
+   SIMILARITY INVESTIGATION LAB
+   Geometry Unit 3 Week 1
+   Repository: Geometry-U3L1-Prove-it
+   ========================================================= */
+
+const studentNameInput = document.getElementById("studentName");
+const nameFeedback = document.getElementById("nameFeedback");
+const startButton = document.getElementById("startButton");
+
+const introSection = document.getElementById("introSection");
+const activitySection = document.getElementById("activitySection");
+const masterySection = document.getElementById("masterySection");
+const certificateSection = document.getElementById("certificateSection");
+
+const missionContainer = document.getElementById("missionContainer");
+const activityFeedback = document.getElementById("activityFeedback");
+const checkButton = document.getElementById("checkButton");
+const nextButton = document.getElementById("nextButton");
+
+const masteryContainer = document.getElementById("masteryContainer");
+const masteryFeedback = document.getElementById("masteryFeedback");
+const masteryButton = document.getElementById("masteryButton");
+
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
+const certificateName = document.getElementById("certificateName");
+const certificateDate = document.getElementById("certificateDate");
+const verificationCode = document.getElementById("verificationCode");
+
+const printButton = document.getElementById("printButton");
+const restartButton = document.getElementById("restartButton");
+
+let studentName = "";
+let currentMission = 0;
+let missionSet = [];
+const completedMissions = new Set();
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomChoice(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+function shuffle(array) {
+    const copy = [...array];
+
+    for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+
+    return copy;
+}
+
+function formatNumber(value) {
+    if (Number.isInteger(value)) {
+        return String(value);
+    }
+
+    const rounded = Math.round(value * 100) / 100;
+    return String(rounded);
+}
+
+function normalizeName(value) {
+    return value.trim().replace(/\s+/g, " ");
+}
+
+function validFullName(value) {
+    const parts = normalizeName(value).split(" ");
+
+    return (
+        parts.length >= 2 &&
+        parts.every((part) => part.length >= 2)
+    );
+}
+
+function fractionLabel(value) {
+    const commonFractions = [
+        [0.25, "1/4"],
+        [1 / 3, "1/3"],
+        [0.5, "1/2"],
+        [2 / 3, "2/3"],
+        [1.5, "3/2"],
+        [2, "2"],
+        [3, "3"]
+    ];
+
+    for (const [number, label] of commonFractions) {
+        if (Math.abs(value - number) < 0.0001) {
+            return label;
+        }
+    }
+
+    return formatNumber(value);
+}
+
+function createRadioQuestion(question, index, prefix) {
+    const wrapper = document.createElement("div");
+    const fieldset = document.createElement("fieldset");
+    const legend = document.createElement("legend");
+    const choiceList = document.createElement("div");
+    const feedback = document.createElement("div");
+
+    wrapper.className = "question";
+    wrapper.dataset.questionIndex = String(index);
+
+    fieldset.style.border = "0";
+    fieldset.style.padding = "0";
+    fieldset.style.margin = "0";
+
+    legend.style.fontWeight = "bold";
+    legend.style.color = "#0f2d44";
+    legend.style.marginBottom = "10px";
+    legend.textContent = `${index + 1}. ${question.prompt}`;
+
+    choiceList.style.display = "grid";
+    choiceList.style.gap = "8px";
+
+    shuffle(question.choices).forEach(([labelText, value]) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        const span = document.createElement("span");
+
+        label.style.display = "flex";
+        label.style.gap = "9px";
+        label.style.alignItems = "flex-start";
+        label.style.padding = "10px";
+        label.style.border = "1px solid #d6e6ef";
+        label.style.borderRadius = "8px";
+        label.style.background = "#f6f9fb";
+        label.style.cursor = "pointer";
+
+        input.type = "radio";
+        input.name = `${prefix}-${index}`;
+        input.value = value;
+        input.style.marginTop = "4px";
+
+        span.textContent = labelText;
+
+        label.appendChild(input);
+        label.appendChild(span);
+        choiceList.appendChild(label);
+    });
+
+    feedback.className = "feedback";
+    feedback.style.minHeight = "22px";
+    feedback.setAttribute("aria-live", "polite");
+
+    fieldset.appendChild(legend);
+    fieldset.appendChild(choiceList);
+
+    wrapper.appendChild(fieldset);
+    wrapper.appendChild(feedback);
+
+    return wrapper;
+}
+
+function createNumericQuestion(question, index, prefix) {
+    const wrapper = document.createElement("div");
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    const feedback = document.createElement("div");
+
+    wrapper.className = "question";
+    wrapper.dataset.questionIndex = String(index);
+
+    label.style.display = "block";
+    label.style.fontWeight = "bold";
+    label.style.color = "#0f2d44";
+    label.style.marginBottom = "8px";
+    label.textContent = `${index + 1}. ${question.prompt}`;
+
+    input.type = "number";
+    input.step = "any";
+    input.name = `${prefix}-${index}`;
+    input.style.width = "100%";
+    input.style.maxWidth = "260px";
+    input.style.padding = "10px";
+    input.style.border = "1px solid #b8c7d1";
+    input.style.borderRadius = "8px";
+    input.setAttribute("aria-label", question.prompt);
+
+    feedback.className = "feedback";
+    feedback.style.minHeight = "22px";
+    feedback.setAttribute("aria-live", "polite");
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    wrapper.appendChild(feedback);
+
+    return wrapper;
+}
+
+function createCoordinateGrid(points, imagePoints, scaleFactor) {
+    const svg = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+    );
+
+    svg.setAttribute("viewBox", "0 0 620 620");
+    svg.setAttribute(
+        "aria-label",
+        "Coordinate grid showing a preimage triangle and its dilated image"
+    );
+    svg.setAttribute("role", "img");
+
+    const margin = 60;
+    const size = 500;
+    const min = -10;
+    const max = 10;
+    const unit = size / (max - min);
+
+    function mapX(x) {
+        return margin + (x - min) * unit;
+    }
+
+    function mapY(y) {
+        return margin + (max - y) * unit;
+    }
+
+    for (let i = min; i <= max; i += 1) {
+        const vertical = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+        vertical.setAttribute("x1", mapX(i));
+        vertical.setAttribute("x2", mapX(i));
+        vertical.setAttribute("y1", margin);
+        vertical.setAttribute("y2", margin + size);
+        vertical.setAttribute("stroke", i === 0 ? "#0f2d44" : "#d6e6ef");
+        vertical.setAttribute("stroke-width", i === 0 ? "2.5" : "1");
+        svg.appendChild(vertical);
+
+        const horizontal = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+        horizontal.setAttribute("x1", margin);
+        horizontal.setAttribute("x2", margin + size);
+        horizontal.setAttribute("y1", mapY(i));
+        horizontal.setAttribute("y2", mapY(i));
+        horizontal.setAttribute("stroke", i === 0 ? "#0f2d44" : "#d6e6ef");
+        horizontal.setAttribute("stroke-width", i === 0 ? "2.5" : "1");
+        svg.appendChild(horizontal);
+    }
+
+    for (let i = min; i <= max; i += 2) {
+        if (i !== 0) {
+            const xLabel = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
+            xLabel.setAttribute("x", mapX(i));
+            xLabel.setAttribute("y", mapY(0) + 22);
+            xLabel.setAttribute("text-anchor", "middle");
+            xLabel.setAttribute("font-size", "12");
+            xLabel.textContent = String(i);
+            svg.appendChild(xLabel);
+
+            const yLabel = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
+            yLabel.setAttribute("x", mapX(0) - 16);
+            yLabel.setAttribute("y", mapY(i) + 4);
+            yLabel.setAttribute("text-anchor", "middle");
+            yLabel.setAttribute("font-size", "12");
+            yLabel.textContent = String(i);
+            svg.appendChild(yLabel);
+        }
+    }
+
+    function addPolygon(pointSet, color, dash) {
+        const polygon = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polygon"
+        );
+
+        polygon.setAttribute(
+            "points",
+            pointSet
+                .map((point) => `${mapX(point.x)},${mapY(point.y)}`)
+                .join(" ")
+        );
+
+        polygon.setAttribute("fill", color);
+        polygon.setAttribute("fill-opacity", "0.17");
+        polygon.setAttribute("stroke", color);
+        polygon.setAttribute("stroke-width", "4");
+
+        if (dash) {
+            polygon.setAttribute("stroke-dasharray", "9 6");
+        }
+
+        svg.appendChild(polygon);
+    }
+
+    addPolygon(points, "#0f2d44", false);
+    addPolygon(imagePoints, "#2f80a8", true);
+
+    points.forEach((point, index) => {
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+        );
+
+        text.setAttribute("x", mapX(point.x) - 12);
+        text.setAttribute("y", mapY(point.y) - 10);
+        text.setAttribute("font-size", "15");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("fill", "#0f2d44");
+        text.textContent = ["A", "B", "C"][index];
+        svg.appendChild(text);
+    });
+
+    imagePoints.forEach((point, index) => {
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+        );
+
+        text.setAttribute("x", mapX(point.x) + 12);
+        text.setAttribute("y", mapY(point.y) - 10);
+        text.setAttribute("font-size", "15");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("fill", "#2f80a8");
+        text.textContent = ["A′", "B′", "C′"][index];
+        svg.appendChild(text);
+    });
+
+    const title = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+    );
+
+    title.setAttribute("x", "310");
+    title.setAttribute("y", "32");
+    title.setAttribute("text-anchor", "middle");
+    title.setAttribute("font-size", "18");
+    title.setAttribute("font-weight", "bold");
+    title.setAttribute("fill", "#0f2d44");
+    title.textContent = `Dilation centered at the origin, k = ${fractionLabel(scaleFactor)}`;
+
+    svg.appendChild(title);
+
+    return svg;
+}
+
+function createScaleFigure(preWidth, preHeight, imageWidth, imageHeight) {
+    const svg = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+    );
+
+    svg.setAttribute("viewBox", "0 0 760 330");
+    svg.setAttribute(
+        "aria-label",
+        "Two similar rectangles showing preimage and image dimensions"
+    );
+    svg.setAttribute("role", "img");
+
+    const leftRect = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "rect"
+    );
+
+    leftRect.setAttribute("x", "70");
+    leftRect.setAttribute("y", "100");
+    leftRect.setAttribute("width", "220");
+    leftRect.setAttribute("height", "140");
+    leftRect.setAttribute("fill", "#0f2d44");
+    leftRect.setAttribute("fill-opacity", "0.13");
+    leftRect.setAttribute("stroke", "#0f2d44");
+    leftRect.setAttribute("stroke-width", "4");
+
+    const rightRect = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "rect"
+    );
+
+    rightRect.setAttribute("x", "460");
+    rightRect.setAttribute("y", "70");
+    rightRect.setAttribute("width", "240");
+    rightRect.setAttribute("height", "190");
+    rightRect.setAttribute("fill", "#2f80a8");
+    rightRect.setAttribute("fill-opacity", "0.13");
+    rightRect.setAttribute("stroke", "#2f80a8");
+    rightRect.setAttribute("stroke-width", "4");
+
+    svg.appendChild(leftRect);
+    svg.appendChild(rightRect);
+
+    const labels = [
+        ["Preimage", 180, 55, "#0f2d44"],
+        ["Image", 580, 40, "#2f80a8"],
+        [`${preWidth} units`, 180, 270, "#0f2d44"],
+        [`${preHeight} units`, 35, 175, "#0f2d44"],
+        [`${imageWidth} units`, 580, 295, "#2f80a8"],
+        [`${imageHeight} units`, 725, 165, "#2f80a8"]
+    ];
+
+    labels.forEach(([textValue, x, y, color]) => {
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+        );
+
+        text.setAttribute("x", x);
+        text.setAttribute("y", y);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("font-size", "17");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("fill", color);
+        text.textContent = textValue;
+        svg.appendChild(text);
+    });
+
+    const note = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+    );
+
+    note.setAttribute("x", "380");
+    note.setAttribute("y", "320");
+    note.setAttribute("text-anchor", "middle");
+    note.setAttribute("font-size", "14");
+    note.setAttribute("fill", "#5b6b7a");
+    note.textContent = "Diagram not drawn to scale. Use the labeled dimensions.";
+
+    svg.appendChild(note);
+
+    return svg;
+}
+
+function createSimilarPolygonFigure(baseSides, scaleFactor) {
+    const svg = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+    );
+
+    svg.setAttribute("viewBox", "0 0 760 350");
+    svg.setAttribute(
+        "aria-label",
+        "Two similar quadrilaterals with corresponding side labels"
+    );
+    svg.setAttribute("role", "img");
+
+    const leftPoints = "80,270 250,270 280,120 130,70";
+    const rightPoints = "430,285 690,285 720,75 490,35";
+
+    const left = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "polygon"
+    );
+
+    left.setAttribute("points", leftPoints);
+    left.setAttribute("fill", "#0f2d44");
+    left.setAttribute("fill-opacity", "0.13");
+    left.setAttribute("stroke", "#0f2d44");
+    left.setAttribute("stroke-width", "4");
+
+    const right = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "polygon"
+    );
+
+    right.setAttribute("points", rightPoints);
+    right.setAttribute("fill", "#2f80a8");
+    right.setAttribute("fill-opacity", "0.13");
+    right.setAttribute("stroke", "#2f80a8");
+    right.setAttribute("stroke-width", "4");
+
+    svg.appendChild(left);
+    svg.appendChild(right);
+
+    const labels = [
+        [`${baseSides[0]}`, 165, 300, "#0f2d44"],
+        [`${baseSides[1]}`, 80, 165, "#0f2d44"],
+        [`${baseSides[2]}`, 205, 70, "#0f2d44"],
+        [`${baseSides[3]}`, 275, 205, "#0f2d44"],
+        [`${formatNumber(baseSides[0] * scaleFactor)}`, 560, 320, "#2f80a8"],
+        [`${formatNumber(baseSides[1] * scaleFactor)}`, 430, 180, "#2f80a8"],
+        [`${formatNumber(baseSides[2] * scaleFactor)}`, 600, 40, "#2f80a8"],
+        [`${formatNumber(baseSides[3] * scaleFactor)}`, 720, 190, "#2f80a8"]
+    ];
+
+    labels.forEach(([textValue, x, y, color]) => {
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+        );
+
+        text.setAttribute("x", x);
+        text.setAttribute("y", y);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("font-size", "18");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("fill", color);
+        text.textContent = textValue;
+        svg.appendChild(text);
+    });
+
+    const title = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+    );
+
+    title.setAttribute("x", "380");
+    title.setAttribute("y", "345");
+    title.setAttribute("text-anchor", "middle");
+    title.setAttribute("font-size", "14");
+    title.setAttribute("fill", "#5b6b7a");
+    title.textContent = "Corresponding side lengths are shown.";
+
+    svg.appendChild(title);
+
+    return svg;
+}
+
+function createTriangleSimilarityFigure(type, data) {
+    const svg = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+    );
+
+    svg.setAttribute("viewBox", "0 0 760 360");
+    svg.setAttribute(
+        "aria-label",
+        `Two triangles showing ${type} similarity evidence`
+    );
+    svg.setAttribute("role", "img");
+
+    function addTriangle(points, color) {
+        const polygon = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polygon"
+        );
+
+        polygon.setAttribute(
+            "points",
+            points.map((point) => point.join(",")).join(" ")
+        );
+
+        polygon.setAttribute("fill", color);
+        polygon.setAttribute("fill-opacity", "0.12");
+        polygon.setAttribute("stroke", color);
+        polygon.setAttribute("stroke-width", "4");
+
+        svg.appendChild(polygon);
+    }
+
+    const leftPoints = [
+        [70, 290],
+        [295, 290],
+        [175, 70]
+    ];
+
+    const rightPoints = [
+        [430, 300],
+        [710, 300],
+        [575, 35]
+    ];
+
+    addTriangle(leftPoints, "#0f2d44");
+    addTriangle(rightPoints, "#2f80a8");
+
+    const titles = [
+        ["△ABC", 180, 335, "#0f2d44"],
+        ["△DEF", 575, 340, "#2f80a8"]
+    ];
+
+    titles.forEach(([textValue, x, y, color]) => {
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+        );
+
+        text.setAttribute("x", x);
+        text.setAttribute("y", y);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("font-size", "18");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("fill", color);
+        text.textContent = textValue;
+        svg.appendChild(text);
+    });
+
+    if (type === "AA") {
+        const labels = [
+            [`${data.angle1}°`, 105, 275, "#0f2d44"],
+            [`${data.angle2}°`, 240, 275, "#0f2d44"],
+            [`${data.angle1}°`, 470, 285, "#2f80a8"],
+            [`${data.angle2}°`, 665, 285, "#2f80a8"]
+        ];
+
+        labels.forEach(([textValue, x, y, color]) => {
+            const text = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
+
+            text.setAttribute("x", x);
+            text.setAttribute("y", y);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("font-size", "17");
+            text.setAttribute("font-weight", "bold");
+            text.setAttribute("fill", color);
+            text.textContent = textValue;
+            svg.appendChild(text);
+        });
+    }
+
+    if (type === "SAS") {
+        const labels = [
+            [`${data.side1}`, 180, 315, "#0f2d44"],
+            [`${data.side2}`, 105, 170, "#0f2d44"],
+            [`${data.angle}°`, 100, 275, "#0f2d44"],
+            [`${data.side1 * data.scale}`, 575, 325, "#2f80a8"],
+            [`${data.side2 * data.scale}`, 470, 180, "#2f80a8"],
+            [`${data.angle}°`, 470, 285, "#2f80a8"]
+        ];
+
+        labels.forEach(([textValue, x, y, color]) => {
+            const text = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
+
+            text.setAttribute("x", x);
+            text.setAttribute("y", y);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("font-size", "17");
+            text.setAttribute("font-weight", "bold");
+            text.setAttribute("fill", color);
+            text.textContent = textValue;
+            svg.appendChild(text);
+        });
+    }
+
+    if (type === "SSS") {
+        const labels = [
+            [`${data.a}`, 180, 315, "#0f2d44"],
+            [`${data.b}`, 105, 170, "#0f2d44"],
+            [`${data.c}`, 245, 170, "#0f2d44"],
+            [`${data.a * data.scale}`, 575, 325, "#2f80a8"],
+            [`${data.b * data.scale}`, 470, 180, "#2f80a8"],
+            [`${data.c * data.scale}`, 665, 180, "#2f80a8"]
+        ];
+
+        labels.forEach(([textValue, x, y, color]) => {
+            const text = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
+
+            text.setAttribute("x", x);
+            text.setAttribute("y", y);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("font-size", "17");
+            text.setAttribute("font-weight", "bold");
+            text.setAttribute("fill", color);
+            text.textContent = textValue;
+            svg.appendChild(text);
+        });
+    }
+
+    const note = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+    );
+
+    note.setAttribute("x", "380");
+    note.setAttribute("y", "20");
+    note.setAttribute("text-anchor", "middle");
+    note.setAttribute("font-size", "15");
+    note.setAttribute("font-weight", "bold");
+    note.setAttribute("fill", "#0f2d44");
+    note.textContent = "Use the labeled evidence. Diagram is not drawn to scale.";
+
+    svg.appendChild(note);
+
+    return svg;
+}
+
+function buildMissionSet() {
+    const scaleFactors = [0.5, 2, 3];
+    const dilationScale = randomChoice(scaleFactors);
+
+    const rawPoints =
+        dilationScale === 3
+            ? [
+                { x: 1, y: 1 },
+                { x: 2, y: 1 },
+                { x: 1, y: 2 }
+            ]
+            : [
+                { x: 2, y: 2 },
+                { x: 4, y: 2 },
+                { x: 2, y: 4 }
+            ];
+
+    const imagePoints = rawPoints.map((point) => ({
+        x: point.x * dilationScale,
+        y: point.y * dilationScale
+    }));
+
+    const selectedPointIndex = randomInt(0, 2);
+    const selectedPoint = rawPoints[selectedPointIndex];
+    const selectedImage = imagePoints[selectedPointIndex];
+
+    const rectangleScale = randomChoice([0.5, 2, 3]);
+    const preWidth = randomChoice([4, 6, 8]);
+    const preHeight = randomChoice([3, 5, 7]);
+    const imageWidth = preWidth * rectangleScale;
+    const imageHeight = preHeight * rectangleScale;
+
+    const polygonScale = randomChoice([1.5, 2, 3]);
+    const baseSides = [
+        randomInt(4, 7),
+        randomInt(5, 8),
+        randomInt(6, 9),
+        randomInt(4, 7)
+    ];
+
+    const prePerimeter = baseSides.reduce(
+        (sum, value) => sum + value,
+        0
+    );
+
+    const imagePerimeter = prePerimeter * polygonScale;
+
+    const baseArea = randomChoice([12, 18, 24, 30]);
+    const imageArea = baseArea * polygonScale * polygonScale;
+
+    const similarityType = randomChoice(["AA", "SAS", "SSS"]);
+
+    let similarityData;
+    let similarityQuestions;
+
+    if (similarityType === "AA") {
+        const angle1 = randomChoice([40, 45, 50]);
+        const angle2 = randomChoice([60, 65, 70]);
+
+        similarityData = {
+            angle1,
+            angle2
+        };
+
+        similarityQuestions = [
+            {
+                type: "radio",
+                prompt:
+                    "Which similarity criterion proves the triangles similar?",
+                answer: "AA",
+                choices: [
+                    ["AA Similarity", "AA"],
+                    ["SAS Similarity", "SAS"],
+                    ["SSS Similarity", "SSS"],
+                    ["The evidence is insufficient", "NONE"]
+                ]
+            },
+            {
+                type: "radio",
+                prompt:
+                    "Which correspondence is consistent with △ABC ∼ △DEF?",
+                answer: "CORRECT",
+                choices: [
+                    ["A ↔ D, B ↔ E, C ↔ F", "CORRECT"],
+                    ["A ↔ E, B ↔ F, C ↔ D", "WRONG1"],
+                    ["A ↔ F, B ↔ D, C ↔ E", "WRONG2"],
+                    ["A ↔ D, B ↔ F, C ↔ E", "WRONG3"]
+                ]
+            },
+            {
+                type: "radio",
+                prompt:
+                    "Which proportion must be true for corresponding sides?",
+                answer: "PROP",
+                choices: [
+                    ["AB/DE = BC/EF", "PROP"],
+                    ["AB/EF = BC/DE", "WRONG1"],
+                    ["AC/DE = AB/DF", "WRONG2"],
+                    ["AB + DE = BC + EF", "WRONG3"]
+                ]
+            }
+        ];
+    }
+
+    if (similarityType === "SAS") {
+        similarityData = {
+            side1: 4,
+            side2: 6,
+            scale: 2,
+            angle: randomChoice([45, 55, 65])
+        };
+
+        similarityQuestions = [
+            {
+                type: "radio",
+                prompt:
+                    "Which similarity criterion proves the triangles similar?",
+                answer: "SAS",
+                choices: [
+                    ["AA Similarity", "AA"],
+                    ["SAS Similarity", "SAS"],
+                    ["SSS Similarity", "SSS"],
+                    ["The evidence is insufficient", "NONE"]
+                ]
+            },
+            {
+                type: "radio",
+                prompt:
+                    "Why is SAS Similarity valid in this case?",
+                answer: "INCLUDED",
+                choices: [
+                    [
+                        "Two pairs of corresponding sides are proportional and the included angles are congruent.",
+                        "INCLUDED"
+                    ],
+                    [
+                        "Three pairs of corresponding angles are congruent.",
+                        "ANGLES"
+                    ],
+                    [
+                        "Only one pair of sides is proportional.",
+                        "ONE"
+                    ],
+                    [
+                        "The non-included angles are supplementary.",
+                        "SUPP"
+                    ]
+                ]
+            },
+            {
+                type: "radio",
+                prompt:
+                    "Which proportion matches the labeled corresponding sides?",
+                answer: "PROP",
+                choices: [
+                    ["4/8 = 6/12", "PROP"],
+                    ["4/12 = 6/8", "WRONG1"],
+                    ["4 + 8 = 6 + 12", "WRONG2"],
+                    ["4/6 = 12/8", "WRONG3"]
+                ]
+            }
+        ];
+    }
+
+    if (similarityType === "SSS") {
+        similarityData = {
+            a: 4,
+            b: 5,
+            c: 6,
+            scale: 2
+        };
+
+        similarityQuestions = [
+            {
+                type: "radio",
+                prompt:
+                    "Which similarity criterion proves the triangles similar?",
+                answer: "SSS",
+                choices: [
+                    ["AA Similarity", "AA"],
+                    ["SAS Similarity", "SAS"],
+                    ["SSS Similarity", "SSS"],
+                    ["The evidence is insufficient", "NONE"]
+                ]
+            },
+            {
+                type: "radio",
+                prompt:
+                    "Which statement best justifies SSS Similarity?",
+                answer: "PROP",
+                choices: [
+                    [
+                        "All three pairs of corresponding sides are proportional.",
+                        "PROP"
+                    ],
+                    [
+                        "All three pairs of corresponding sides are congruent.",
+                        "CONGRUENT"
+                    ],
+                    [
+                        "Only two pairs of angles are congruent.",
+                        "ANGLES"
+                    ],
+                    [
+                        "One pair of sides is parallel.",
+                        "PARALLEL"
+                    ]
+                ]
+            },
+            {
+                type: "radio",
+                prompt:
+                    "Which ratio is the scale factor from △ABC to △DEF?",
+                answer: "2",
+                choices: [
+                    ["2", "2"],
+                    ["1/2", "0.5"],
+                    ["3", "3"],
+                    ["4", "4"]
+                ]
+            }
+        ];
+    }
+
+    return [
+        {
+            title: "Investigation 1: Coordinate Dilations",
+            directions:
+                "Analyze the dilation centered at the origin. Use the labeled coordinates and scale factor.",
+            diagram() {
+                return createCoordinateGrid(
+                    rawPoints,
+                    imagePoints,
+                    dilationScale
+                );
+            },
+            questions: [
+                {
+                    type: "radio",
+                    prompt:
+                        `Point ${["A", "B", "C"][selectedPointIndex]} is (${selectedPoint.x}, ${selectedPoint.y}). What is its image?`,
+                    answer: `${selectedImage.x},${selectedImage.y}`,
+                    choices: shuffle([
+                        [
+                            `(${formatNumber(selectedImage.x)}, ${formatNumber(selectedImage.y)})`,
+                            `${selectedImage.x},${selectedImage.y}`
+                        ],
+                        [
+                            `(${formatNumber(selectedPoint.x + dilationScale)}, ${formatNumber(selectedPoint.y + dilationScale)})`,
+                            `${selectedPoint.x + dilationScale},${selectedPoint.y + dilationScale}`
+                        ],
+                        [
+                            `(${formatNumber(selectedPoint.x - dilationScale)}, ${formatNumber(selectedPoint.y - dilationScale)})`,
+                            `${selectedPoint.x - dilationScale},${selectedPoint.y - dilationScale}`
+                        ],
+                        [
+                            `(${formatNumber(selectedPoint.x)}, ${formatNumber(selectedPoint.y)})`,
+                            `${selectedPoint.x},${selectedPoint.y}`
+                        ]
+                    ])
+                },
+                {
+                    type: "radio",
+                    prompt:
+                        "Is the dilation an enlargement or a reduction?",
+                    answer:
+                        dilationScale > 1
+                            ? "ENLARGEMENT"
+                            : "REDUCTION",
+                    choices: [
+                        ["Enlargement", "ENLARGEMENT"],
+                        ["Reduction", "REDUCTION"],
+                        ["Rigid motion", "RIGID"],
+                        ["Reflection", "REFLECTION"]
+                    ]
+                },
+                {
+                    type: "radio",
+                    prompt:
+                        "How do distances from the origin change under this dilation?",
+                    answer: "MULTIPLY",
+                    choices: [
+                        [
+                            `They are multiplied by ${fractionLabel(dilationScale)}.`,
+                            "MULTIPLY"
+                        ],
+                        [
+                            `They increase by ${fractionLabel(dilationScale)} units.`,
+                            "ADD"
+                        ],
+                        [
+                            "They remain unchanged.",
+                            "UNCHANGED"
+                        ],
+                        [
+                            "They become negative.",
+                            "NEGATIVE"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            title: "Investigation 2: Scale Factor Analysis",
+            directions:
+                "Compare the preimage and image. Use corresponding dimensions to determine the transformation relationship.",
+            diagram() {
+                return createScaleFigure(
+                    preWidth,
+                    preHeight,
+                    imageWidth,
+                    imageHeight
+                );
+            },
+            questions: [
+                {
+                    type: "numeric",
+                    prompt:
+                        "What is the scale factor from the preimage to the image?",
+                    answer: rectangleScale,
+                    tolerance: 0.001
+                },
+                {
+                    type: "radio",
+                    prompt:
+                        "Which equation correctly represents the width relationship?",
+                    answer: "WIDTH",
+                    choices: [
+                        [
+                            `${preWidth} × ${fractionLabel(rectangleScale)} = ${formatNumber(imageWidth)}`,
+                            "WIDTH"
+                        ],
+                        [
+                            `${preWidth} + ${fractionLabel(rectangleScale)} = ${formatNumber(imageWidth)}`,
+                            "ADD"
+                        ],
+                        [
+                            `${formatNumber(imageWidth)} × ${fractionLabel(rectangleScale)} = ${preWidth}`,
+                            "REVERSE"
+                        ],
+                        [
+                            `${preWidth} - ${fractionLabel(rectangleScale)} = ${formatNumber(imageWidth)}`,
+                            "SUBTRACT"
+                        ]
+                    ]
+                },
+                {
+                    type: "radio",
+                    prompt:
+                        "Which statement is true about corresponding angles after a dilation?",
+                    answer: "ANGLES",
+                    choices: [
+                        [
+                            "Corresponding angles remain congruent.",
+                            "ANGLES"
+                        ],
+                        [
+                            "Corresponding angles are multiplied by the scale factor.",
+                            "MULTIPLIED"
+                        ],
+                        [
+                            "Corresponding angles are divided by the scale factor.",
+                            "DIVIDED"
+                        ],
+                        [
+                            "Corresponding angles become supplementary.",
+                            "SUPP"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            title: "Investigation 3: Similar Figure Measurements",
+            directions:
+                "Use the scale factor and corresponding measurements to analyze perimeter and area.",
+            diagram() {
+                return createSimilarPolygonFigure(
+                    baseSides,
+                    polygonScale
+                );
+            },
+            questions: [
+                {
+                    type: "numeric",
+                    prompt:
+                        `The preimage perimeter is ${prePerimeter} units. What is the image perimeter?`,
+                    answer: imagePerimeter,
+                    tolerance: 0.001
+                },
+                {
+                    type: "numeric",
+                    prompt:
+                        `The preimage area is ${baseArea} square units. What is the image area?`,
+                    answer: imageArea,
+                    tolerance: 0.001
+                },
+                {
+                    type: "radio",
+                    prompt:
+                        "Which rule correctly describes how dilation affects perimeter and area?",
+                    answer: "RULE",
+                    choices: [
+                        [
+                            "Perimeter is multiplied by k, and area is multiplied by k².",
+                            "RULE"
+                        ],
+                        [
+                            "Perimeter and area are both multiplied by k.",
+                            "SAME"
+                        ],
+                        [
+                            "Perimeter is multiplied by k², and area by k.",
+                            "REVERSED"
+                        ],
+                        [
+                            "Perimeter and area remain unchanged.",
+                            "UNCHANGED"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            title: "Investigation 4: Triangle Similarity",
+            directions:
+                "Use the labeled evidence to determine the valid similarity criterion, correspondence, and proportional relationship.",
+            diagram() {
+                return createTriangleSimilarityFigure(
+                    similarityType,
+                    similarityData
+                );
+            },
+            questions: similarityQuestions
+        }
+    ];
+}
+
+const masteryQuestions = [
+    {
+        type: "radio",
+        prompt:
+            "A dilation has scale factor k = 3. By what factor does area change?",
+        answer: "9",
+        choices: [
+            ["3", "3"],
+            ["6", "6"],
+            ["9", "9"],
+            ["12", "12"]
+        ]
+    },
+    {
+        type: "radio",
+        prompt:
+            "Which property is always preserved by a dilation?",
+        answer: "ANGLES",
+        choices: [
+            ["Corresponding angle measures", "ANGLES"],
+            ["All side lengths", "SIDES"],
+            ["Perimeter", "PERIMETER"],
+            ["Area", "AREA"]
+        ]
+    },
+    {
+        type: "radio",
+        prompt:
+            "Which evidence is sufficient to prove two triangles similar by SAS Similarity?",
+        answer: "SAS",
+        choices: [
+            [
+                "Two pairs of corresponding sides are proportional and the included angles are congruent.",
+                "SAS"
+            ],
+            [
+                "Two pairs of corresponding sides are congruent.",
+                "CONGRUENT"
+            ],
+            [
+                "One pair of corresponding angles is congruent.",
+                "ONEANGLE"
+            ],
+            [
+                "Three side lengths have equal sums.",
+                "SUM"
+            ]
+        ]
+    },
+    {
+        type: "radio",
+        prompt:
+            "If △ABC ∼ △DEF, which proportion is correct?",
+        answer: "PROP",
+        choices: [
+            ["AB/DE = BC/EF", "PROP"],
+            ["AB/EF = BC/DE", "WRONG1"],
+            ["AC/DE = AB/DF", "WRONG2"],
+            ["AB + DE = BC + EF", "WRONG3"]
+        ]
+    }
+];
+
+function renderMission() {
+    const mission = missionSet[currentMission];
+
+    missionContainer.innerHTML = "";
+    activityFeedback.textContent = "";
+    activityFeedback.className = "feedback";
+
+    checkButton.disabled = false;
+    nextButton.disabled = true;
+
+    const heading = document.createElement("h2");
+    const directions = document.createElement("p");
+    const missionBox = document.createElement("div");
+    const diagramWrapper = document.createElement("div");
+
+    heading.className = "caseTitle";
+    heading.textContent = mission.title;
+
+    directions.textContent = mission.directions;
+
+    missionBox.className = "missionBox";
+
+    diagramWrapper.className = "diagram";
+    diagramWrapper.appendChild(mission.diagram());
+
+    missionBox.appendChild(diagramWrapper);
+
+    missionContainer.appendChild(heading);
+    missionContainer.appendChild(directions);
+    missionContainer.appendChild(missionBox);
+
+    mission.questions.forEach((question, index) => {
+        if (question.type === "numeric") {
+            missionContainer.appendChild(
+                createNumericQuestion(
+                    question,
+                    index,
+                    `mission-${currentMission}`
+                )
+            );
+        } else {
+            missionContainer.appendChild(
+                createRadioQuestion(
+                    question,
+                    index,
+                    `mission-${currentMission}`
+                )
+            );
+        }
+    });
+
+    nextButton.textContent =
+        currentMission === missionSet.length - 1
+            ? "Continue to Mastery"
+            : "Next Investigation";
+
+    updateProgress();
+}
+
+function evaluateQuestion(wrapper, question, index, prefix) {
+    const feedback = wrapper.querySelector(".feedback");
+    let correct = false;
+
+    wrapper.style.border = "1px solid #d6e6ef";
+    wrapper.style.background = "#ffffff";
+
+    if (question.type === "numeric") {
+        const input = wrapper.querySelector(
+            `input[name="${prefix}-${index}"]`
+        );
+
+        const entered = Number(input.value);
+        const tolerance = question.tolerance || 0.001;
+
+        correct =
+            input.value.trim() !== "" &&
+            Math.abs(entered - question.answer) <= tolerance;
+    } else {
+        const checked = wrapper.querySelector(
+            `input[name="${prefix}-${index}"]:checked`
+        );
+
+        correct =
+            checked &&
+            checked.value === String(question.answer);
+    }
+
+    if (correct) {
+        wrapper.style.border = "2px solid #3ca65c";
+        wrapper.style.background = "#f4fff6";
+        feedback.textContent = "Correct.";
+        feedback.className = "feedback good";
+    } else {
+        wrapper.style.border = "2px solid #b42318";
+        wrapper.style.background = "#fff2f2";
+        feedback.textContent =
+            "Not yet. Review the diagram and relationship, then try again.";
+        feedback.className = "feedback bad";
+    }
+
+    return correct;
+}
+
+function checkMission() {
+    const mission = missionSet[currentMission];
+    const wrappers = [
+        ...missionContainer.querySelectorAll(".question")
+    ];
+
+    let correctCount = 0;
+
+    wrappers.forEach((wrapper, index) => {
+        if (
+            evaluateQuestion(
+                wrapper,
+                mission.questions[index],
+                index,
+                `mission-${currentMission}`
+            )
+        ) {
+            correctCount += 1;
+        }
+    });
+
+    if (correctCount === mission.questions.length) {
+        completedMissions.add(currentMission);
+
+        activityFeedback.textContent =
+            "Investigation complete. All three responses are correct.";
+
+        activityFeedback.className = "feedback good";
+        checkButton.disabled = true;
+        nextButton.disabled = false;
+
+        updateProgress();
+        nextButton.focus();
+        return;
+    }
+
+    const remaining =
+        mission.questions.length - correctCount;
+
+    activityFeedback.textContent =
+        `${correctCount} of ${mission.questions.length} are correct. Correct the remaining ${remaining} response${remaining === 1 ? "" : "s"} and check again.`;
+
+    activityFeedback.className = "feedback bad";
+
+    const firstIncorrect = [
+        ...missionContainer.querySelectorAll(".question")
+    ].find(
+        (wrapper) =>
+            wrapper.style.border.includes("b42318")
+    );
+
+    if (firstIncorrect) {
+        firstIncorrect.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    }
+}
+
+function advanceMission() {
+    if (!completedMissions.has(currentMission)) {
+        return;
+    }
+
+    currentMission += 1;
+
+    if (currentMission < missionSet.length) {
+        renderMission();
+
+        window.scrollTo({
+            top: activitySection.offsetTop - 10,
+            behavior: "smooth"
+        });
+
+        return;
+    }
+
+    showMastery();
+}
+
+function updateProgress() {
+    const completed = completedMissions.size;
+    const percentage = Math.round((completed / 4) * 75);
+
+    progressBar.style.width = `${percentage}%`;
+
+    progressText.textContent =
+        currentMission < 4
+            ? `Investigation ${currentMission + 1} of 4`
+            : "Investigations Complete";
+
+    const labels = [
+        "Coordinate Dilations",
+        "Scale Factor",
+        "Similar Figures",
+        "Triangle Similarity",
+        "Mastery",
+        "Certificate"
+    ];
+
+    for (let index = 0; index < 6; index += 1) {
+        const step = document.getElementById(`step${index}`);
+
+        step.classList.remove("active", "done");
+        step.textContent = labels[index];
+
+        if (index < completed) {
+            step.classList.add("done");
+            step.textContent = `${labels[index]} ✓`;
+        } else if (index === currentMission) {
+            step.classList.add("active");
+        }
+    }
+}
+
+function showMastery() {
+    activitySection.classList.add("hidden");
+    masterySection.classList.remove("hidden");
+
+    masteryContainer.innerHTML = "";
+    masteryFeedback.textContent = "";
+    masteryFeedback.className = "feedback";
+    masteryButton.disabled = false;
+
+    masteryQuestions.forEach((question, index) => {
+        masteryContainer.appendChild(
+            createRadioQuestion(
+                question,
+                index,
+                "mastery"
+            )
+        );
+    });
+
+    const masteryStep = document.getElementById("step4");
+    masteryStep.classList.add("active");
+
+    window.scrollTo({
+        top: masterySection.offsetTop - 10,
+        behavior: "smooth"
+    });
+}
+
+function checkMastery() {
+    const wrappers = [
+        ...masteryContainer.querySelectorAll(".question")
+    ];
+
+    let correctCount = 0;
+
+    wrappers.forEach((wrapper, index) => {
+        if (
+            evaluateQuestion(
+                wrapper,
+                masteryQuestions[index],
+                index,
+                "mastery"
+            )
+        ) {
+            correctCount += 1;
+        }
+    });
+
+    if (correctCount === masteryQuestions.length) {
+        masteryFeedback.textContent =
+            "Mastery demonstrated. Your certificate is ready.";
+
+        masteryFeedback.className = "feedback good";
+        masteryButton.disabled = true;
+
+        setTimeout(showCertificate, 400);
+        return;
+    }
+
+    const remaining =
+        masteryQuestions.length - correctCount;
+
+    masteryFeedback.textContent =
+        `${correctCount} of ${masteryQuestions.length} are correct. Correct the remaining ${remaining} response${remaining === 1 ? "" : "s"} and check again.`;
+
+    masteryFeedback.className = "feedback bad";
+}
+
+function createVerificationCode(name, date) {
+    const datePart = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0")
+    ].join("");
+
+    const source =
+        `${name.toUpperCase()}|${datePart}|GEO-U3L1|12|4`;
+
+    let hash = 2166136261;
+
+    for (let index = 0; index < source.length; index += 1) {
+        hash ^= source.charCodeAt(index);
+        hash = Math.imul(hash, 16777619);
+    }
+
+    const hashPart = (hash >>> 0)
+        .toString(36)
+        .toUpperCase()
+        .padStart(7, "0")
+        .slice(0, 7);
+
+    return `GEO-U3L1-${datePart}-${hashPart}`;
+}
+
+function showCertificate() {
+    masterySection.classList.add("hidden");
+    certificateSection.classList.remove("hidden");
+
+    const now = new Date();
+
+    certificateName.textContent = studentName;
+
+    certificateDate.textContent = now.toLocaleDateString(
+        "en-US",
+        {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        }
+    );
+
+    verificationCode.textContent =
+        createVerificationCode(studentName, now);
+
+    const masteryStep = document.getElementById("step4");
+    masteryStep.classList.remove("active");
+    masteryStep.classList.add("done");
+    masteryStep.textContent = "Mastery ✓";
+
+    const certificateStep = document.getElementById("step5");
+    certificateStep.classList.add("done");
+    certificateStep.textContent = "Certificate ✓";
+
+    window.scrollTo({
+        top: certificateSection.offsetTop - 10,
+        behavior: "smooth"
+    });
+}
+
+function startActivity() {
+    const enteredName = normalizeName(studentNameInput.value);
+
+    if (!validFullName(enteredName)) {
+        nameFeedback.textContent =
+            "Enter both your first and last name before beginning.";
+
+        studentNameInput.focus();
+        return;
+    }
+
+    studentName = enteredName;
+    currentMission = 0;
+    completedMissions.clear();
+    missionSet = buildMissionSet();
+
+    nameFeedback.textContent = "";
+
+    introSection.classList.add("hidden");
+    activitySection.classList.remove("hidden");
+
+    renderMission();
+
+    window.scrollTo({
+        top: activitySection.offsetTop - 10,
+        behavior: "smooth"
+    });
+}
+
+startButton.addEventListener("click", startActivity);
+
+studentNameInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        startActivity();
+    }
+});
+
+checkButton.addEventListener("click", checkMission);
+nextButton.addEventListener("click", advanceMission);
+masteryButton.addEventListener("click", checkMastery);
+
+printButton.addEventListener("click", () => {
+    window.print();
+});
+
+restartButton.addEventListener("click", () => {
+    window.location.reload();
+});
+</script>
+
+</body>
+</html>
