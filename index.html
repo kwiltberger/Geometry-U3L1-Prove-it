@@ -134,7 +134,9 @@ padding-bottom:6px;
 
 }
 
-button{
+button,
+input,
+textarea{
 
 font:inherit;
 
@@ -297,6 +299,124 @@ border:1px solid var(--grayBorder);
 margin-top:14px;
 font-weight:bold;
 
+}
+
+.workPrompt{
+display:block;
+margin:14px 0 6px;
+color:var(--navy);
+font-weight:bold;
+}
+
+.workBox{
+width:100%;
+min-height:95px;
+padding:11px;
+border:1px solid var(--grayBorder);
+border-radius:8px;
+background:white;
+resize:vertical;
+}
+
+.whiteboardBlock{
+margin-top:14px;
+padding:12px;
+border:1px solid var(--grayBorder);
+border-radius:10px;
+background:var(--blue);
+}
+
+.whiteboardTitle{
+margin:0 0 6px;
+color:var(--navy);
+font-weight:bold;
+}
+
+.whiteboardHelp{
+margin:0 0 10px;
+font-size:14px;
+}
+
+.whiteboardCanvas{
+display:block;
+width:100%;
+height:220px;
+border:2px solid #7f9fb2;
+border-radius:8px;
+background:white;
+cursor:crosshair;
+touch-action:none;
+}
+
+.whiteboardControls{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-top:8px;
+}
+
+.whiteboardButton{
+padding:8px 12px;
+border:0;
+border-radius:7px;
+background:#2f80a8;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.responseRecord{
+margin-top:24px;
+padding:22px;
+border:1px solid var(--grayBorder);
+border-radius:12px;
+background:white;
+}
+
+.responseMission,
+.responseQuestion{
+margin:14px 0;
+padding:14px;
+border:1px solid var(--grayBorder);
+border-radius:9px;
+background:var(--gray);
+break-inside:avoid;
+page-break-inside:avoid;
+}
+
+.responseItem{
+margin:10px 0;
+padding-bottom:10px;
+border-bottom:1px solid var(--grayBorder);
+}
+
+.responseItem:last-child{
+border-bottom:0;
+}
+
+.responseLabel{
+color:var(--navy);
+font-weight:bold;
+}
+
+.typedResponse{
+margin-top:8px;
+padding:10px;
+border-left:4px solid var(--blueBorder);
+background:white;
+white-space:pre-wrap;
+overflow-wrap:anywhere;
+}
+
+.whiteboardSavedImage{
+display:block;
+width:100%;
+max-width:760px;
+margin-top:8px;
+border:1px solid var(--grayBorder);
+border-radius:8px;
+background:white;
+object-fit:contain;
 }
 
 .good{
@@ -478,6 +598,27 @@ width:100%;
 
 }
 
+.certificate{
+break-after:page;
+page-break-after:always;
+}
+
+.responseRecord{
+margin-top:0;
+padding:0;
+border:0;
+}
+
+.responseMission,
+.responseQuestion{
+background:white;
+}
+
+.whiteboardSavedImage{
+max-height:4.2in;
+object-fit:contain;
+}
+
 .noPrint{
 
 display:none!important;
@@ -528,7 +669,10 @@ Complete four investigation labs to demonstrate mastery of dilations and similar
 
 Every student receives randomized values.
 
-You may correct mistakes until every investigation is correct.
+You may correct mistakes until every investigation is correct. For problems
+that require calculations, proportional reasoning, or coordinate work, use
+the whiteboard workspace to show your work. Your final completion page will
+include your responses, work shown, and check counts.
 
 </p>
 
@@ -723,7 +867,8 @@ Final Mastery Check
 
 <p>
 
-Answer every question correctly to unlock your certificate.
+Answer every question correctly to unlock your completion page. Use the
+whiteboard on questions that require calculations or written reasoning.
 
 </p>
 
@@ -868,6 +1013,30 @@ id="verificationCode">
 
 </div>
 
+<div class="card yellow">
+<h3 style="margin-top:0;">Ready to Submit</h3>
+<p>
+Your completion page includes the certificate and a full response record with
+your final answers, typed explanations, whiteboard work where applicable, and
+the number of checks used for each question.
+</p>
+</div>
+
+<div class="responseRecord" id="responseRecord">
+<h2>Student Response Record</h2>
+<p>
+<strong>Student:</strong> <span id="responseStudentName"></span><br>
+<strong>Completion Date:</strong> <span id="responseCompletionDate"></span><br>
+<strong>Verification Code:</strong> <span id="responseVerificationCode"></span>
+</p>
+
+<h2>Investigation Responses</h2>
+<div id="missionResponseSummary"></div>
+
+<h2>Final Mastery Responses</h2>
+<div id="masteryResponseSummary"></div>
+</div>
+
 <div
 class="navButtons noPrint">
 
@@ -925,6 +1094,11 @@ const progressText = document.getElementById("progressText");
 const certificateName = document.getElementById("certificateName");
 const certificateDate = document.getElementById("certificateDate");
 const verificationCode = document.getElementById("verificationCode");
+const responseStudentName = document.getElementById("responseStudentName");
+const responseCompletionDate = document.getElementById("responseCompletionDate");
+const responseVerificationCode = document.getElementById("responseVerificationCode");
+const missionResponseSummary = document.getElementById("missionResponseSummary");
+const masteryResponseSummary = document.getElementById("masteryResponseSummary");
 
 const printButton = document.getElementById("printButton");
 const restartButton = document.getElementById("restartButton");
@@ -933,6 +1107,18 @@ let studentName = "";
 let currentMission = 0;
 let missionSet = [];
 const completedMissions = new Set();
+
+let missionResponses = {};
+let missionWork = {};
+let missionWhiteboards = {};
+let missionWhiteboardHasInk = {};
+let missionCheckCounts = {};
+
+let masteryResponses = [];
+let masteryWork = [];
+let masteryWhiteboards = [];
+let masteryWhiteboardHasInk = [];
+let masteryCheckCounts = [];
 
 function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -973,6 +1159,243 @@ function validFullName(value) {
         parts.length >= 2 &&
         parts.every((part) => part.length >= 2)
     );
+}
+
+function questionNeedsWhiteboard(question) {
+    if (question.type === "numeric") {
+        return true;
+    }
+
+    const prompt = String(question.prompt || "").toLowerCase();
+
+    return (
+        prompt.includes("what is its image") ||
+        prompt.includes("scale factor") ||
+        prompt.includes("proportion") ||
+        prompt.includes("ratio") ||
+        prompt.includes("perimeter") ||
+        prompt.includes("area change") ||
+        prompt.includes("corresponding sides")
+    );
+}
+
+function createWorkElements(question, index, prefix) {
+    const fragment = document.createDocumentFragment();
+
+    const workLabel = document.createElement("label");
+    const workBox = document.createElement("textarea");
+
+    workLabel.className = "workPrompt";
+    workLabel.htmlFor = `${prefix}-${index}-work`;
+    workLabel.textContent = "Explain your reasoning or show supporting work";
+
+    workBox.className = "workBox";
+    workBox.id = `${prefix}-${index}-work`;
+    workBox.dataset.workIndex = String(index);
+    workBox.maxLength = 4000;
+    workBox.placeholder =
+        "Type an explanation, proportion, calculation steps, or reasoning here...";
+
+    fragment.appendChild(workLabel);
+    fragment.appendChild(workBox);
+
+    if (questionNeedsWhiteboard(question)) {
+        const block = document.createElement("div");
+        const title = document.createElement("div");
+        const help = document.createElement("p");
+        const canvas = document.createElement("canvas");
+        const controls = document.createElement("div");
+        const clearButton = document.createElement("button");
+
+        block.className = "whiteboardBlock";
+        title.className = "whiteboardTitle";
+        title.textContent = "Whiteboard workspace";
+
+        help.className = "whiteboardHelp";
+        help.textContent =
+            "Use this space for calculations, coordinate work, proportions, diagrams, or labels. Saved work will appear in the final PDF.";
+
+        canvas.className = "whiteboardCanvas";
+        canvas.id = `${prefix}-${index}-whiteboard`;
+        canvas.width = 900;
+        canvas.height = 300;
+        canvas.setAttribute(
+            "aria-label",
+            `Whiteboard workspace for question ${index + 1}`
+        );
+
+        controls.className = "whiteboardControls";
+        clearButton.className = "whiteboardButton";
+        clearButton.type = "button";
+        clearButton.textContent = "Clear Whiteboard";
+
+        controls.appendChild(clearButton);
+        block.appendChild(title);
+        block.appendChild(help);
+        block.appendChild(canvas);
+        block.appendChild(controls);
+        fragment.appendChild(block);
+
+        setTimeout(() => {
+            setupWhiteboard(canvas, clearButton, prefix, index);
+        }, 0);
+    }
+
+    return fragment;
+}
+
+function whiteboardLocation(prefix, index) {
+    if (prefix === "mastery") {
+        return { type: "mastery", index };
+    }
+
+    const match = /^mission-(\d+)$/.exec(prefix);
+
+    return {
+        type: "mission",
+        missionIndex: match ? Number(match[1]) : currentMission,
+        index
+    };
+}
+
+function getSavedWhiteboard(prefix, index) {
+    const location = whiteboardLocation(prefix, index);
+
+    if (location.type === "mastery") {
+        return {
+            dataUrl: masteryWhiteboards[index] || "",
+            hasInk: Boolean(masteryWhiteboardHasInk[index])
+        };
+    }
+
+    return {
+        dataUrl:
+            ((missionWhiteboards[location.missionIndex] || [])[index]) || "",
+        hasInk:
+            Boolean(
+                ((missionWhiteboardHasInk[location.missionIndex] || [])[index])
+            )
+    };
+}
+
+function saveWhiteboard(prefix, index, canvas, hasInk) {
+    const copy = document.createElement("canvas");
+    copy.width = canvas.width;
+    copy.height = canvas.height;
+
+    const copyContext = copy.getContext("2d");
+    copyContext.fillStyle = "#ffffff";
+    copyContext.fillRect(0, 0, copy.width, copy.height);
+    copyContext.drawImage(canvas, 0, 0);
+
+    const dataUrl = copy.toDataURL("image/png");
+    const location = whiteboardLocation(prefix, index);
+
+    if (location.type === "mastery") {
+        masteryWhiteboards[index] = dataUrl;
+        masteryWhiteboardHasInk[index] = hasInk;
+        return;
+    }
+
+    missionWhiteboards[location.missionIndex] =
+        missionWhiteboards[location.missionIndex] ||
+        missionSet[location.missionIndex].questions.map(() => "");
+
+    missionWhiteboardHasInk[location.missionIndex] =
+        missionWhiteboardHasInk[location.missionIndex] ||
+        missionSet[location.missionIndex].questions.map(() => false);
+
+    missionWhiteboards[location.missionIndex][index] = dataUrl;
+    missionWhiteboardHasInk[location.missionIndex][index] = hasInk;
+}
+
+function setupWhiteboard(canvas, clearButton, prefix, index) {
+    const context = canvas.getContext("2d");
+    let drawing = false;
+    let moved = false;
+
+    context.lineWidth = 4;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.strokeStyle = "#1f2933";
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const saved = getSavedWhiteboard(prefix, index);
+
+    if (saved.dataUrl) {
+        const image = new Image();
+        image.onload = () => {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        };
+        image.src = saved.dataUrl;
+    }
+
+    function pointerPosition(event) {
+        const rect = canvas.getBoundingClientRect();
+
+        return {
+            x: (event.clientX - rect.left) * (canvas.width / rect.width),
+            y: (event.clientY - rect.top) * (canvas.height / rect.height)
+        };
+    }
+
+    canvas.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        canvas.setPointerCapture(event.pointerId);
+
+        const point = pointerPosition(event);
+        drawing = true;
+        moved = false;
+
+        context.beginPath();
+        context.moveTo(point.x, point.y);
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+        if (!drawing) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const point = pointerPosition(event);
+        context.lineTo(point.x, point.y);
+        context.stroke();
+        moved = true;
+    });
+
+    function finishDrawing(event) {
+        if (!drawing) {
+            return;
+        }
+
+        event.preventDefault();
+
+        if (!moved) {
+            const point = pointerPosition(event);
+            context.beginPath();
+            context.arc(point.x, point.y, 2, 0, Math.PI * 2);
+            context.fillStyle = "#1f2933";
+            context.fill();
+        }
+
+        drawing = false;
+        context.closePath();
+        saveWhiteboard(prefix, index, canvas, true);
+    }
+
+    canvas.addEventListener("pointerup", finishDrawing);
+    canvas.addEventListener("pointercancel", finishDrawing);
+
+    clearButton.addEventListener("click", () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        saveWhiteboard(prefix, index, canvas, false);
+    });
 }
 
 function fractionLabel(value) {
@@ -1051,6 +1474,7 @@ function createRadioQuestion(question, index, prefix) {
     fieldset.appendChild(choiceList);
 
     wrapper.appendChild(fieldset);
+    wrapper.appendChild(createWorkElements(question, index, prefix));
     wrapper.appendChild(feedback);
 
     return wrapper;
@@ -1087,6 +1511,7 @@ function createNumericQuestion(question, index, prefix) {
 
     wrapper.appendChild(label);
     wrapper.appendChild(input);
+    wrapper.appendChild(createWorkElements(question, index, prefix));
     wrapper.appendChild(feedback);
 
     return wrapper;
@@ -2116,23 +2541,46 @@ function renderMission() {
     missionContainer.appendChild(missionBox);
 
     mission.questions.forEach((question, index) => {
-        if (question.type === "numeric") {
-            missionContainer.appendChild(
-                createNumericQuestion(
-                    question,
-                    index,
-                    `mission-${currentMission}`
-                )
-            );
-        } else {
-            missionContainer.appendChild(
-                createRadioQuestion(
-                    question,
-                    index,
-                    `mission-${currentMission}`
-                )
-            );
+        const prefix = `mission-${currentMission}`;
+
+        const rendered =
+            question.type === "numeric"
+                ? createNumericQuestion(question, index, prefix)
+                : createRadioQuestion(question, index, prefix);
+
+        const saved =
+            (missionResponses[currentMission] || [])[index];
+
+        if (saved) {
+            if (question.type === "numeric") {
+                const input = rendered.querySelector(
+                    `input[name="${prefix}-${index}"]`
+                );
+
+                if (input) {
+                    input.value = saved.response || "";
+                }
+            } else if (saved.value !== undefined && saved.value !== null) {
+                const radio = [
+                    ...rendered.querySelectorAll(
+                        `input[name="${prefix}-${index}"]`
+                    )
+                ].find((item) => item.value === String(saved.value));
+
+                if (radio) {
+                    radio.checked = true;
+                }
+            }
         }
+
+        const workBox = rendered.querySelector(".workBox");
+
+        if (workBox) {
+            workBox.value =
+                ((missionWork[currentMission] || [])[index]) || "";
+        }
+
+        missionContainer.appendChild(rendered);
     });
 
     nextButton.textContent =
@@ -2195,7 +2643,13 @@ function checkMission() {
 
     let correctCount = 0;
 
+    if (!missionCheckCounts[currentMission]) {
+        missionCheckCounts[currentMission] =
+            mission.questions.map(() => 0);
+    }
+
     wrappers.forEach((wrapper, index) => {
+        missionCheckCounts[currentMission][index] += 1;
         if (
             evaluateQuestion(
                 wrapper,
@@ -2207,6 +2661,67 @@ function checkMission() {
             correctCount += 1;
         }
     });
+
+    missionResponses[currentMission] = wrappers.map(
+        (wrapper, index) => {
+            const question = mission.questions[index];
+            const workBox = wrapper.querySelector(".workBox");
+            const canvas = wrapper.querySelector(".whiteboardCanvas");
+
+            missionWork[currentMission] =
+                missionWork[currentMission] ||
+                mission.questions.map(() => "");
+
+            missionWork[currentMission][index] =
+                workBox ? workBox.value.trim() : "";
+
+            if (canvas) {
+                const savedWhiteboard =
+                    getSavedWhiteboard(
+                        `mission-${currentMission}`,
+                        index
+                    );
+
+                saveWhiteboard(
+                    `mission-${currentMission}`,
+                    index,
+                    canvas,
+                    savedWhiteboard.hasInk
+                );
+            }
+
+            if (question.type === "numeric") {
+                const input = wrapper.querySelector(
+                    `input[name="mission-${currentMission}-${index}"]`
+                );
+
+                return {
+                    prompt: question.prompt,
+                    response: input ? input.value.trim() : "",
+                    value: input ? input.value.trim() : "",
+                    checksUsed:
+                        missionCheckCounts[currentMission][index] || 0
+                };
+            }
+
+            const checked = wrapper.querySelector(
+                `input[name="mission-${currentMission}-${index}"]:checked`
+            );
+
+            const labelText =
+                checked
+                    ? checked.closest("label").querySelector("span").textContent
+                    : "";
+
+            return {
+                prompt: question.prompt,
+                response: labelText,
+                value: checked ? checked.value : null,
+                checksUsed:
+                    missionCheckCounts[currentMission][index] || 0
+            };
+        }
+    );
 
     if (correctCount === mission.questions.length) {
         completedMissions.add(currentMission);
@@ -2337,6 +2852,17 @@ function checkMastery() {
 
     let correctCount = 0;
 
+    if (
+        !Array.isArray(masteryCheckCounts) ||
+        masteryCheckCounts.length !== masteryQuestions.length
+    ) {
+        masteryCheckCounts = masteryQuestions.map(() => 0);
+    }
+
+    masteryCheckCounts = masteryCheckCounts.map(
+        (count) => count + 1
+    );
+
     wrappers.forEach((wrapper, index) => {
         if (
             evaluateQuestion(
@@ -2351,8 +2877,48 @@ function checkMastery() {
     });
 
     if (correctCount === masteryQuestions.length) {
+        masteryResponses = wrappers.map((wrapper, index) => {
+            const question = masteryQuestions[index];
+            const checked = wrapper.querySelector(
+                `input[name="mastery-${index}"]:checked`
+            );
+            const workBox = wrapper.querySelector(".workBox");
+            const canvas = wrapper.querySelector(".whiteboardCanvas");
+
+            masteryWork[index] =
+                workBox ? workBox.value.trim() : "";
+
+            if (canvas) {
+                const savedWhiteboard =
+                    getSavedWhiteboard("mastery", index);
+
+                saveWhiteboard(
+                    "mastery",
+                    index,
+                    canvas,
+                    savedWhiteboard.hasInk
+                );
+            }
+
+            const labelText =
+                checked
+                    ? checked.closest("label").querySelector("span").textContent
+                    : "";
+
+            return {
+                prompt: question.prompt,
+                response: labelText,
+                value: checked ? checked.value : null,
+                work: masteryWork[index] || "",
+                whiteboard: masteryWhiteboards[index] || "",
+                whiteboardHasInk:
+                    Boolean(masteryWhiteboardHasInk[index]),
+                checksUsed: masteryCheckCounts[index] || 0
+            };
+        });
+
         masteryFeedback.textContent =
-            "Mastery demonstrated. Your certificate is ready.";
+            "Mastery demonstrated. Your completion page is ready.";
 
         masteryFeedback.className = "feedback good";
         masteryButton.disabled = true;
@@ -2396,6 +2962,163 @@ function createVerificationCode(name, date) {
     return `GEO-U3L1-${datePart}-${hashPart}`;
 }
 
+function addTextElement(parent, tagName, text, className) {
+    const element = document.createElement(tagName);
+
+    if (className) {
+        element.className = className;
+    }
+
+    element.textContent = text;
+    parent.appendChild(element);
+
+    return element;
+}
+
+function appendWorkAndWhiteboard(
+    parent,
+    typedWork,
+    whiteboardData,
+    whiteboardHasInk,
+    altText
+) {
+    addTextElement(
+        parent,
+        "div",
+        "Typed work / explanation",
+        "responseLabel"
+    );
+
+    const typed = document.createElement("div");
+    typed.className = "typedResponse";
+    typed.textContent =
+        typedWork ||
+        "No typed work or explanation was entered for this question.";
+    parent.appendChild(typed);
+
+    if (whiteboardData !== undefined) {
+        const heading = document.createElement("div");
+        heading.className = "responseLabel";
+        heading.style.marginTop = "10px";
+        heading.textContent = "Whiteboard work";
+        parent.appendChild(heading);
+
+        if (whiteboardData && whiteboardHasInk) {
+            const image = document.createElement("img");
+            image.className = "whiteboardSavedImage";
+            image.src = whiteboardData;
+            image.alt = altText;
+            parent.appendChild(image);
+        } else {
+            addTextElement(
+                parent,
+                "div",
+                "No whiteboard work was saved for this question."
+            );
+        }
+    }
+}
+
+function buildResponseRecord(completionDateText, code) {
+    responseStudentName.textContent = studentName;
+    responseCompletionDate.textContent = completionDateText;
+    responseVerificationCode.textContent = code;
+
+    missionResponseSummary.innerHTML = "";
+    masteryResponseSummary.innerHTML = "";
+
+    missionSet.forEach((mission, missionIndex) => {
+        const section = document.createElement("section");
+        section.className = "responseMission";
+
+        addTextElement(section, "h3", mission.title);
+
+        mission.questions.forEach((question, questionIndex) => {
+            const saved =
+                ((missionResponses[missionIndex] || [])[questionIndex]) || {};
+
+            const item = document.createElement("div");
+            item.className = "responseItem";
+
+            addTextElement(
+                item,
+                "div",
+                `${questionIndex + 1}. ${question.prompt}`,
+                "responseLabel"
+            );
+
+            addTextElement(
+                item,
+                "div",
+                `Student response: ${saved.response || ""}`
+            );
+
+            addTextElement(
+                item,
+                "div",
+                `Checks used: ${saved.checksUsed || 0}`
+            );
+
+            const needsBoard = questionNeedsWhiteboard(question);
+
+            appendWorkAndWhiteboard(
+                item,
+                ((missionWork[missionIndex] || [])[questionIndex]) || "",
+                needsBoard
+                    ? ((missionWhiteboards[missionIndex] || [])[questionIndex] || "")
+                    : undefined,
+                needsBoard
+                    ? Boolean(
+                        ((missionWhiteboardHasInk[missionIndex] || [])[questionIndex])
+                      )
+                    : false,
+                `Whiteboard work for ${mission.title}, question ${questionIndex + 1}`
+            );
+
+            section.appendChild(item);
+        });
+
+        missionResponseSummary.appendChild(section);
+    });
+
+    masteryResponses.forEach((saved, index) => {
+        const question = masteryQuestions[index];
+        const section = document.createElement("section");
+        section.className = "responseQuestion";
+
+        addTextElement(
+            section,
+            "h3",
+            `${index + 1}. ${question.prompt}`
+        );
+
+        addTextElement(
+            section,
+            "div",
+            `Student response: ${saved.response || ""}`,
+            "responseLabel"
+        );
+
+        addTextElement(
+            section,
+            "div",
+            `Checks used: ${saved.checksUsed || 0}`
+        );
+
+        const needsBoard = questionNeedsWhiteboard(question);
+
+        appendWorkAndWhiteboard(
+            section,
+            saved.work || "",
+            needsBoard ? (saved.whiteboard || "") : undefined,
+            needsBoard ? Boolean(saved.whiteboardHasInk) : false,
+            `Whiteboard work for final mastery question ${index + 1}`
+        );
+
+        masteryResponseSummary.appendChild(section);
+    });
+}
+
 function showCertificate() {
     masterySection.classList.add("hidden");
     certificateSection.classList.remove("hidden");
@@ -2404,7 +3127,7 @@ function showCertificate() {
 
     certificateName.textContent = studentName;
 
-    certificateDate.textContent = now.toLocaleDateString(
+    const completionDateText = now.toLocaleDateString(
         "en-US",
         {
             year: "numeric",
@@ -2413,8 +3136,13 @@ function showCertificate() {
         }
     );
 
-    verificationCode.textContent =
+    const code =
         createVerificationCode(studentName, now);
+
+    certificateDate.textContent = completionDateText;
+    verificationCode.textContent = code;
+
+    buildResponseRecord(completionDateText, code);
 
     const masteryStep = document.getElementById("step4");
     masteryStep.classList.remove("active");
@@ -2447,6 +3175,18 @@ function startActivity() {
     completedMissions.clear();
     missionSet = buildMissionSet();
 
+    missionResponses = {};
+    missionWork = {};
+    missionWhiteboards = {};
+    missionWhiteboardHasInk = {};
+    missionCheckCounts = {};
+
+    masteryResponses = [];
+    masteryWork = masteryQuestions.map(() => "");
+    masteryWhiteboards = masteryQuestions.map(() => "");
+    masteryWhiteboardHasInk = masteryQuestions.map(() => false);
+    masteryCheckCounts = masteryQuestions.map(() => 0);
+
     nameFeedback.textContent = "";
 
     introSection.classList.add("hidden");
@@ -2466,6 +3206,26 @@ studentNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
         startActivity();
     }
+});
+
+missionContainer.addEventListener("input", (event) => {
+    if (!event.target.classList.contains("workBox")) {
+        return;
+    }
+
+    const wrapper = event.target.closest(".question");
+
+    if (!wrapper) {
+        return;
+    }
+
+    const index = Number(wrapper.dataset.questionIndex);
+
+    missionWork[currentMission] =
+        missionWork[currentMission] ||
+        missionSet[currentMission].questions.map(() => "");
+
+    missionWork[currentMission][index] = event.target.value;
 });
 
 checkButton.addEventListener("click", checkMission);
