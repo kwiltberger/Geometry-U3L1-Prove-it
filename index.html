@@ -627,6 +627,16 @@ display:none!important;
 
 }
 
+
+.reasoningCheck{
+margin-top:14px;
+padding:14px;
+background:var(--green);
+border-left:6px solid var(--greenBorder);
+border-radius:8px;
+}
+.reasoningCheck h3{margin:0 0 6px;color:var(--navy);}
+.reasoningCheck p{margin:0;}
 </style>
 
 </head>
@@ -680,25 +690,31 @@ include your responses, work shown, and check counts.
 
 <h3>
 
-Certificate Requirement
+How Your Work Will Be Reviewed
 
 </h3>
 
 <p>
 
-✔ 12 Investigation Questions Correct
+Your teacher will look at your mathematical work, reasoning, accuracy, and independence.
 
 </p>
 
 <p>
 
-✔ 4 Mastery Questions Correct
+✔ Complete all four investigations
 
 </p>
 
 <p>
 
-✔ First & Last Name Entered
+✔ Complete the final independent challenge
+
+</p>
+
+<p>
+
+✔ Show required work or drawings
 
 </p>
 
@@ -806,7 +822,7 @@ Similarity
 class="step"
 id="step4">
 
-Mastery
+Final Challenge
 
 </div>
 
@@ -814,7 +830,7 @@ Mastery
 class="step"
 id="step5">
 
-Certificate
+Teacher Review
 
 </div>
 
@@ -861,14 +877,15 @@ class="card purple hidden">
 
 <h2>
 
-Final Mastery Check
+Final Independent Similarity Challenge
 
 </h2>
 
 <p>
 
-Answer every question correctly to unlock your completion page. Use the
-whiteboard on questions that require calculations or written reasoning.
+Complete the three questions below. On the SAS Similarity question, use the
+whiteboard to draw your own pair of similar triangles and mark two proportional
+side pairs and the included congruent angle.
 
 </p>
 
@@ -909,7 +926,7 @@ GEOMETRY • UNIT 3 • WEEK 1
 
 <h2>
 
-Certificate of Mastery
+Prove It Complete — Ready for Teacher Review
 
 </h2>
 
@@ -993,7 +1010,7 @@ Overall
 
 <br>
 
-Mastery Demonstrated
+Teacher Review Required
 
 </div>
 
@@ -1020,6 +1037,20 @@ Your completion page includes the certificate and a full response record with
 your final answers, typed explanations, whiteboard work where applicable, and
 the number of checks used for each question.
 </p>
+</div>
+
+
+<div class="card yellow">
+<h3 style="margin-top:0;">Standard 6-Point Prove It Scale</h3>
+<table>
+<tr><th>Score</th><th>What the Evidence Shows</th></tr>
+<tr><td><strong>6</strong></td><td>Independent mastery with clear, correct work and reasoning.</td></tr>
+<tr><td><strong>5</strong></td><td>Proficient and mostly independent; minor correction may be needed.</td></tr>
+<tr><td><strong>4</strong></td><td>Developing proficiency; some feedback is needed.</td></tr>
+<tr><td><strong>3</strong></td><td>Good-faith attempt with substantial support or repeated feedback.</td></tr>
+<tr><td><strong>0</strong></td><td>No usable evidence or no submission.</td></tr>
+</table>
+<p><strong>Note:</strong> Check counts are evidence of independence, not an automatic score.</p>
 </div>
 
 <div class="responseRecord" id="responseRecord">
@@ -1162,42 +1193,30 @@ function validFullName(value) {
 }
 
 function questionNeedsWhiteboard(question) {
-    if (question.type === "numeric") {
-        return true;
-    }
-
-    const prompt = String(question.prompt || "").toLowerCase();
-
-    return (
-        prompt.includes("what is its image") ||
-        prompt.includes("scale factor") ||
-        prompt.includes("proportion") ||
-        prompt.includes("ratio") ||
-        prompt.includes("perimeter") ||
-        prompt.includes("area change") ||
-        prompt.includes("corresponding sides")
-    );
+    return Boolean(question.requireWhiteboard);
 }
 
 function createWorkElements(question, index, prefix) {
     const fragment = document.createDocumentFragment();
 
-    const workLabel = document.createElement("label");
-    const workBox = document.createElement("textarea");
+    if (question.reasoningPrompt && question.requireTypedReasoning) {
+        const workLabel = document.createElement("label");
+        const workBox = document.createElement("textarea");
 
-    workLabel.className = "workPrompt";
-    workLabel.htmlFor = `${prefix}-${index}-work`;
-    workLabel.textContent = "Explain your reasoning or show supporting work";
+        workLabel.className = "workPrompt";
+        workLabel.htmlFor = `${prefix}-${index}-work`;
+        workLabel.textContent = question.reasoningPrompt;
 
-    workBox.className = "workBox";
-    workBox.id = `${prefix}-${index}-work`;
-    workBox.dataset.workIndex = String(index);
-    workBox.maxLength = 4000;
-    workBox.placeholder =
-        "Type an explanation, proportion, calculation steps, or reasoning here...";
+        workBox.className = "workBox";
+        workBox.id = `${prefix}-${index}-work`;
+        workBox.dataset.workIndex = String(index);
+        workBox.maxLength = 4000;
+        workBox.placeholder =
+            "Keep it short—one equation, ratio, or sentence is enough.";
 
-    fragment.appendChild(workLabel);
-    fragment.appendChild(workBox);
+        fragment.appendChild(workLabel);
+        fragment.appendChild(workBox);
+    }
 
     if (questionNeedsWhiteboard(question)) {
         const block = document.createElement("div");
@@ -1213,7 +1232,7 @@ function createWorkElements(question, index, prefix) {
 
         help.className = "whiteboardHelp";
         help.textContent =
-            "Use this space for calculations, coordinate work, proportions, diagrams, or labels. Saved work will appear in the final PDF.";
+            "Show the calculation or coordinate work that supports your answer. Saved work will appear in the teacher review record.";
 
         canvas.className = "whiteboardCanvas";
         canvas.id = `${prefix}-${index}-whiteboard`;
@@ -1890,6 +1909,29 @@ function createTriangleSimilarityFigure(type, data) {
     addTriangle(leftPoints, "#0f2d44");
     addTriangle(rightPoints, "#2f80a8");
 
+    const vertexLabels = [
+        ["A", 52, 310, "#0f2d44"],
+        ["B", 302, 310, "#0f2d44"],
+        ["C", 168, 58, "#0f2d44"],
+        ["D", 412, 320, "#2f80a8"],
+        ["E", 714, 320, "#2f80a8"],
+        ["F", 568, 28, "#2f80a8"]
+    ];
+
+    vertexLabels.forEach(([label, x, y, color]) => {
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+        );
+        text.setAttribute("x", x);
+        text.setAttribute("y", y);
+        text.setAttribute("font-size", "18");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("fill", color);
+        text.textContent = label;
+        svg.appendChild(text);
+    });
+
     const titles = [
         ["△ABC", 180, 335, "#0f2d44"],
         ["△DEF", 575, 340, "#2f80a8"]
@@ -2446,68 +2488,113 @@ function buildMissionSet() {
     ];
 }
 
+
+function applyImprovedProveItDesign(missions) {
+    // Investigation 1: one coordinate result + a simple rule.
+    missions[0].questions = [
+        missions[0].questions[0],
+        {
+            type: "radio",
+            prompt: "Which rule describes a dilation centered at the origin?",
+            answer: "RULE",
+            choices: [
+                ["Multiply both coordinates by the scale factor.", "RULE"],
+                ["Add the scale factor to both coordinates.", "ADD"],
+                ["Switch the x- and y-coordinates.", "SWITCH"],
+                ["Change both coordinate signs.", "SIGNS"]
+            ],
+            reasoningPrompt: "What did you do to both coordinates?",
+            requireWhiteboard: false,
+            requireTypedReasoning: false
+        }
+    ];
+    missions[0].questions[0].reasoningPrompt =
+        "What did you multiply each coordinate by?";
+    missions[0].questions[0].requireWhiteboard = true;
+    missions[0].questions[0].requireTypedReasoning = true;
+
+    // Investigation 2: scale factor + preserved angles.
+    missions[1].questions = [
+        missions[1].questions[0],
+        missions[1].questions[2]
+    ];
+    missions[1].questions[0].reasoningPrompt =
+        "Show one ratio you used to find the scale factor.";
+    missions[1].questions[0].requireTypedReasoning = true;
+    missions[1].questions[1].reasoningPrompt =
+        "What happens to angle measures during a dilation?";
+    missions[1].questions[1].requireTypedReasoning = false;
+
+    // Investigation 3: keep perimeter/area, but use one short conceptual check.
+    missions[2].questions[0].reasoningPrompt =
+        "What did you multiply the perimeter by?";
+    missions[2].questions[0].requireWhiteboard = true;
+    missions[2].questions[0].requireTypedReasoning = false;
+    missions[2].questions[1].reasoningPrompt =
+        "What did you multiply the area by?";
+    missions[2].questions[1].requireWhiteboard = true;
+    missions[2].questions[1].requireTypedReasoning = false;
+    missions[2].questions[2].reasoningPrompt =
+        "Complete the rule in your own words: perimeter uses ___ and area uses ___.";
+    missions[2].questions[2].requireTypedReasoning = true;
+
+    // Investigation 4: criterion + one targeted evidence question.
+    const criterion = missions[3].questions[0].answer;
+    missions[3].questions = [
+        missions[3].questions[0],
+        missions[3].questions[2]
+    ];
+    missions[3].questions[0].reasoningPrompt =
+        criterion === "AA"
+            ? "Name the two matching angle pairs."
+            : criterion === "SAS"
+                ? "Write the two equal side ratios."
+                : "Write the common scale factor for the three side pairs.";
+    missions[3].questions[0].requireTypedReasoning = true;
+    missions[3].questions[1].reasoningPrompt =
+        "Use the vertex order A ↔ D, B ↔ E, C ↔ F to support your answer.";
+    missions[3].questions[1].requireTypedReasoning = false;
+
+    return missions;
+}
+
 const masteryQuestions = [
     {
         type: "radio",
-        prompt:
-            "A dilation has scale factor k = 3. By what factor does area change?",
+        prompt: "A dilation has scale factor k = 3. By what factor does area change?",
         answer: "9",
-        choices: [
-            ["3", "3"],
-            ["6", "6"],
-            ["9", "9"],
-            ["12", "12"]
-        ]
+        choices: [["3","3"],["6","6"],["9","9"],["12","12"]],
+        reasoningPrompt: "What calculation did you use with k = 3?",
+        requireTypedReasoning: false
     },
     {
         type: "radio",
-        prompt:
-            "Which property is always preserved by a dilation?",
+        prompt: "Which property is always preserved by a dilation?",
         answer: "ANGLES",
         choices: [
-            ["Corresponding angle measures", "ANGLES"],
-            ["All side lengths", "SIDES"],
-            ["Perimeter", "PERIMETER"],
-            ["Area", "AREA"]
-        ]
+            ["Corresponding angle measures","ANGLES"],
+            ["All side lengths","SIDES"],
+            ["Perimeter","PERIMETER"],
+            ["Area","AREA"]
+        ],
+        reasoningPrompt: "In a dilation, what happens to corresponding angles?",
+        requireTypedReasoning: false
     },
     {
         type: "radio",
-        prompt:
-            "Which evidence is sufficient to prove two triangles similar by SAS Similarity?",
+        prompt: "Which evidence is enough for SAS Similarity?",
         answer: "SAS",
         choices: [
-            [
-                "Two pairs of corresponding sides are proportional and the included angles are congruent.",
-                "SAS"
-            ],
-            [
-                "Two pairs of corresponding sides are congruent.",
-                "CONGRUENT"
-            ],
-            [
-                "One pair of corresponding angles is congruent.",
-                "ONEANGLE"
-            ],
-            [
-                "Three side lengths have equal sums.",
-                "SUM"
-            ]
-        ]
-    },
-    {
-        type: "radio",
-        prompt:
-            "If △ABC ∼ △DEF, which proportion is correct?",
-        answer: "PROP",
-        choices: [
-            ["AB/DE = BC/EF", "PROP"],
-            ["AB/EF = BC/DE", "WRONG1"],
-            ["AC/DE = AB/DF", "WRONG2"],
-            ["AB + DE = BC + EF", "WRONG3"]
-        ]
+            ["Two proportional side pairs and congruent included angles.","SAS"],
+            ["Two congruent side pairs only.","SIDES"],
+            ["One congruent angle pair only.","ANGLE"],
+            ["Three sides with equal sums.","SUM"]
+        ],
+        reasoningPrompt: "Write the two equal side ratios that support SAS Similarity.",
+        requireTypedReasoning: true,
+        requireWhiteboard: true
     }
-];
+]
 
 function renderMission() {
     const mission = missionSet[currentMission];
@@ -2585,7 +2672,7 @@ function renderMission() {
 
     nextButton.textContent =
         currentMission === missionSet.length - 1
-            ? "Continue to Mastery"
+            ? "Continue to Final Challenge"
             : "Next Investigation";
 
     updateProgress();
@@ -2593,7 +2680,24 @@ function renderMission() {
 
 function evaluateQuestion(wrapper, question, index, prefix) {
     const feedback = wrapper.querySelector(".feedback");
+    const workBox = wrapper.querySelector(".workBox");
+    const canvas = wrapper.querySelector(".whiteboardCanvas");
     let correct = false;
+
+    if (question.requireTypedReasoning && workBox && workBox.value.trim() === "") {
+        feedback.textContent = "Complete the short reasoning check before checking your answer.";
+        feedback.className = "feedback bad";
+        return false;
+    }
+
+    if (question.requireWhiteboard && canvas) {
+        const saved = getSavedWhiteboard(prefix, index);
+        if (!saved.hasInk) {
+            feedback.textContent = "Show the required work or drawing before checking your answer.";
+            feedback.className = "feedback bad";
+            return false;
+        }
+    }
 
     wrapper.style.border = "1px solid #d6e6ef";
     wrapper.style.background = "#ffffff";
@@ -3173,7 +3277,7 @@ function startActivity() {
     studentName = enteredName;
     currentMission = 0;
     completedMissions.clear();
-    missionSet = buildMissionSet();
+    missionSet = applyImprovedProveItDesign(buildMissionSet());
 
     missionResponses = {};
     missionWork = {};
